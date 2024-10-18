@@ -14,5 +14,8 @@ package Componement;
  */
 public abstract class Componement {
     
+    public Componement(){
+        
+    }
     
 }
