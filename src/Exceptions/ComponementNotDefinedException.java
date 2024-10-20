@@ -2,20 +2,20 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package Execptions;
+package Exceptions;
 
 
 /**
  *This exeption is showed when a code for an undefinet componement is executed  
  * @author Administrateur
  */
-public class ComponementNotDefinedExeption extends Exception{
+public class ComponementNotDefinedException extends Exception{
 
-    public ComponementNotDefinedExeption() {
+    public ComponementNotDefinedException() {
         super();
     }
 
-    public ComponementNotDefinedExeption(String string) {
+    public ComponementNotDefinedException(String string) {
         super(string);
     }
 

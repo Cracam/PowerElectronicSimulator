@@ -4,7 +4,7 @@
  */
 package Componement;
 
-import Execptions.UnknownActiveComponementExeption;
+import Exceptions.UnknownActiveComponementException;
 import java.io.File;
 import java.io.IOException;
 import javax.xml.parsers.DocumentBuilder;
@@ -22,12 +22,12 @@ import org.xml.sax.SAXException;
  */
 public class ComponementActive extends Componement {
     //The 6 variables describing the active componement behavior
-    private final boolean V_p;
-    private final boolean V_n;
-    private final boolean P_OffOn;
-    private final boolean P_OnOff;
-    private final boolean N_OffOn;
-    private final boolean N_OnOff;
+    private boolean V_p;
+    private boolean V_n;
+    private boolean P_OffOn;
+    private boolean P_OnOff;
+    private boolean N_OffOn;
+    private boolean N_OnOff; // je voudrais les mettre final mais ça bloque
     
     private static final String[] caracList={"Vp","Vn","P_OnOff","P_OffOn","N_OnOff","N_OffOn"};
     
@@ -35,8 +35,7 @@ public class ComponementActive extends Componement {
     //cell linked to our componement (null if not linked in a cell)
     //private Cell cell;
     
-    //State of the componement (pass or block)
-    private boolean state;
+
     
     
     //Pysical caracteristic of the compinement :
@@ -54,20 +53,33 @@ public class ComponementActive extends Componement {
     
     
     public ComponementActive(String name, int imputNode, int outputNode) {
-        super(name, imputNode, outputNode);
-        System.out.println("Componement.ComponementActive.<init>() type="+this.getType());
-        ComponementActive.count=ComponementActive.count+1;
-        //set carac with XML comparator
-        boolean[] carac =getCarateristics();
-       exeption a faire
-        this.V_p=carac[0];
-        this.V_n=carac[1];
-        this.P_OnOff=carac[2];
-        this.P_OffOn=carac[3];
-        this.N_OnOff=carac[4];
-        this.N_OffOn=carac[5];
-        
-
+            super(name, imputNode, outputNode);
+            System.out.println("Componement.ComponementActive.<init>() type="+this.getType());
+            ComponementActive.count=ComponementActive.count+1;   System.out.println("Componement.ComponementActive.<init>() type="+this.getType());
+            this.R_On=-1;   //Set a impossible value to check that the user implement a value 
+            this.R_Off=-1;  //Set a impossible value to check that the user implement a value 
+            this.V_Th_P=-1; //Set a impossible value to check that the user implement a value 
+            this.V_Th_N=-1; //Set a impossible value to check that the user implement a value 
+        try{
+            //set carac with XML comparator
+            boolean[] carac =getCarateristics();
+            if( carac==null){ //à améliorer ???
+                throw new UnknownActiveComponementException("The componement : "+getType()+" doesn't exist in XML datafiles");
+            }
+            else{
+            this.V_p=carac[0];
+            this.V_n=carac[1];
+            this.P_OnOff=carac[2];
+            this.P_OffOn=carac[3];
+            this.N_OnOff=carac[4];
+            this.N_OffOn=carac[5];
+            }
+            
+        }catch(UnknownActiveComponementException e){
+            System.out.println(e.getMessage());
+            System.out.println("\n\n ****************** Program Stopping ****************** \n\n");
+            System.exit(1);
+        }
     }
     
     /**
@@ -104,11 +116,11 @@ public class ComponementActive extends Componement {
                 }
             }
             //if we get there it's mean that we dont get the active comonement caracteristic in the XML file
-            throw new UnknownActiveComponementExeption("The Active componment "+this.getName() + " does not not have a caracteristic in the XML_Data\\ActiveComponementCaracs.xml file");
+            throw new UnknownActiveComponementException("The Active componment "+this.getName() + " does not not have a caracteristic in the XML_Data\\ActiveComponementCaracs.xml file");
             
             
             
-         } catch (UnknownActiveComponementExeption | IOException | ParserConfigurationException | SAXException e) {
+         } catch (UnknownActiveComponementException | IOException | ParserConfigurationException | SAXException e) {
             return null;
          }
          
@@ -131,16 +143,18 @@ public class ComponementActive extends Componement {
     /**
      * This function is used to link physical caracteristic to the componement
      * like a setter but for 4 parameter at the same time
+     * The sign doesn't matter
+     * 
      * @param R_On resitance when closed (very low)
      * @param R_Off resistance when opened (very high)
      * @param V_Th_P threshold for the V+ closing case 
      * @param V_Th_N threshold for V- closing case 
      */
     public void physicalDescription(float R_On,float R_Off,float V_Th_P,float V_Th_N){
-        this.R_On = R_On;
-        this.R_Off = R_Off;
-        this.V_Th_P = V_Th_P;
-        this.V_Th_N = V_Th_N;
+        this.R_On = Math.abs(R_On);
+        this.R_Off = Math.abs(R_Off);
+        this.V_Th_P = Math.abs(V_Th_P);
+        this.V_Th_N = Math.abs(V_Th_N);
     }
             
     //Booleans caracteristic of the componement      
@@ -216,4 +230,23 @@ public class ComponementActive extends Componement {
     }
 
   
+    @Override
+     public String genCode(){
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+        return "This compnement classType is not Specified named : ";
+    }
+    
+    
 }

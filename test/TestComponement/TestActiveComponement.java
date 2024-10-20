@@ -13,9 +13,10 @@ public class TestActiveComponement{
     @Test
     public void TestXmlRead(){
         ComponementActive comp;
-        comp = new ComponementActive("TK45", 3, 56);
+        comp = new ComponementActive("T45", 3, 56);
         System.out.println(comp.toString());
-        
+        comp.physicalDescription(0.02f,20000f , 1.2f, -1.2f);
+        System.out.println(comp.toString());
     }
 
 

@@ -2,19 +2,19 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package Execptions;
+package Exceptions;
 
 /**
  * Exeption throw whent the active componement in entry does not exist in the XML file caractristic
  * @author Administrateur
  */
-public class UnknownActiveComponementExeption extends Exception{
+public class UnknownActiveComponementException extends Exception{
 
-    public UnknownActiveComponementExeption() {
+    public UnknownActiveComponementException() {
         super();
     }
 
-    public UnknownActiveComponementExeption(String string) {
+    public UnknownActiveComponementException(String string) {
         super(string);
     }
     
