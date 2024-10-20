@@ -4,16 +4,103 @@
  */
 package Componement;
 
+import Execptions.UnknownActiveComponementExeption;
+import java.io.File;
+import java.io.IOException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 /**
  *
  * @author Administrateur
  */
 public class ComponementActive extends Componement {
-
+    //The 6 variables describing the active componement behavior
+    private final boolean V_p;
+    private final boolean V_n;
+    private final boolean P_OffOn;
+    private final boolean P_OnOff;
+    private final boolean N_OffOn;
+    private final boolean N_OnOff;
+    
+    private static final String[] caracList={"Vp","Vn","P_OnOff","P_OffOn","N_OnOff","N_OffOn"};
+    
+    //cell linked to our componement (null if not linked in a cell)
+    //private Cell cell;
+    
+    //Count of active componement
+    public static int count;
+    
+    
     public ComponementActive(String name, int imputNode, int outputNode) {
         super(name, imputNode, outputNode);
+        ComponementActive.count=ComponementActive.count+1;
+        //set carac with XML comparator
+        boolean[] carac =getCarateristics();
+        this.V_p=carac[0];
+        this.V_n=carac[1];
+        this.P_OffOn=carac[2];
+        this.P_OnOff=carac[3];
+        this.N_OffOn=carac[4];
+        this.N_OnOff=carac[5];
+        
+        
+        
+        
+        
         
     }
+    
+    /**
+     * This program use the type of the Componement in order to get it's 6 comutation caracteristic
+     * It can get exeption if the file where componement data is stored is unfoundable
+     * Or if the componement type doesn't exist in this file
+     * @return a size 6 boolean array containing "Vp","Vn","P_OnOff","P_OffOn","N_OnOff","N_OffOn"
+     */
+    private boolean[] getCarateristics(){
+        //C:\BACKUP\Sauv\ENSE3\3A\PROJET_RECHERCHE\PowerElectronicSimulator\XML_Data
+        boolean[] carac=new boolean[6];
+        try {
+            File file = new File("C:\\BACKUP\\Sauv\\ENSE3\\3A\\PROJET_RECHERCHE\\PowerElectronicSimulator\\XML_Data\\ActiveComponementCaracs.xml");
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            Document doc = db.parse(file);
+            doc.getDocumentElement().normalize();
+            System.out.println("Root element " + doc.getDocumentElement().getNodeName());
+            NodeList nodeListOfActiveComponements = doc.getElementsByTagName("ActiveCompnement");
+            
+            Node ActiveNodeComponement;
+            for(int i=0;i<nodeListOfActiveComponements.getLength();i++){
+                ActiveNodeComponement = nodeListOfActiveComponements.item(i);
+
+                if (ActiveNodeComponement.getNodeType() == Node.ELEMENT_NODE) {
+                    Element ActiveComponement =(Element) ActiveNodeComponement;
+                    if (ActiveComponement.getAttribute("prefix").equals(this.getType())){
+                        for (int j=0;j<caracList.length;j++){
+                            carac[j]=Boolean.parseBoolean(ActiveComponement.getAttribute(caracList[j]));
+                            return carac;
+                        }
+                    }
+                }
+            }
+            //if we get there it's mean that we dont get the active comonement caracteristic in the XML file
+            throw new UnknownActiveComponementExeption("The Active componment "+this.getName() + " does not not have a caracteristic in the XML_Data\\ActiveComponementCaracs.xml file");
+            
+            
+            
+         } catch (UnknownActiveComponementExeption | IOException | ParserConfigurationException | SAXException e) {
+            return null;
+         }
+         
+        
+    }
+    
     
     
     

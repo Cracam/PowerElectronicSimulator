@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
+    Document   : ActiveComponementCaracs.xml
+    Created on : 20 october 2024
+    Author     : Lecourt Camille
+    Description:
+        Store all the data corresponding to Active Componement Types
+-->
+<ActiveComponementCaracs>
+	<ActiveComponement 
+		name="diode" 
+		prefix="D"
+		Vp="false"
+		Vn="true"
+		P_OnOff="false"
+		P_OffOn="false"
+		N_OnOff="false"
+		N_OffOn="false"
+	/>
+
+	<ActiveComponement 
+		name="transistor" 
+		prefix="T"
+		Vp="true"
+		Vn="false"
+		P_OnOff="true"
+		P_OffOn="true"
+		N_OnOff="false"
+		N_OffOn="false"
+	/>
+
+	<ActiveComponement 
+		name="thyristor" 
+		prefix="TH"
+		Vp="true"
+		Vn="true"
+		P_OnOff="false"
+		P_OffOn="true"
+		N_OnOff="false"
+		N_OffOn="false"
+	/>
+
+</ActiveComponementCaracs>

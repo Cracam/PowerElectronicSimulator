@@ -31,7 +31,7 @@ public class Componement {
         this.imputNode=imputNode;
         this.outputNode=outputNode;
         
-        
+        //Atttention, il reste les types  \\ bizares qui ne sont pas réglé (pas de nombre)
         String type_constuctor = "";
         String number_constuctor = "";
 
@@ -45,6 +45,7 @@ public class Componement {
         }
         this.number=number_constuctor;
         this.type=type_constuctor;
+        
     }
     
     
@@ -68,7 +69,7 @@ public class Componement {
     public String getNumber() {
         return number;
     }
-    
+   
     @Override
     /**
      * This method will retunrn information on the componement base on his subtype (active, passive, source)
