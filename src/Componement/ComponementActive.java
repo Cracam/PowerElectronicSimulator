@@ -4,6 +4,7 @@
  */
 package Componement;
 
+import Exceptions.UndefinedPhysicalCaracteristicException;
 import Exceptions.UnknownActiveComponementException;
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +35,7 @@ public class ComponementActive extends Componement {
     
     //cell linked to our componement (null if not linked in a cell)
     //private Cell cell;
-    
+    private boolean slaved;
 
     
     
@@ -60,6 +61,7 @@ public class ComponementActive extends Componement {
             this.R_Off=-1;  //Set a impossible value to check that the user implement a value 
             this.V_Th_P=-1; //Set a impossible value to check that the user implement a value 
             this.V_Th_N=-1; //Set a impossible value to check that the user implement a value 
+            this.slaved=false;
         try{
             //set carac with XML comparator
             boolean[] carac =getCarateristics();
@@ -120,9 +122,11 @@ public class ComponementActive extends Componement {
             
             
             
-         } catch (UnknownActiveComponementException | IOException | ParserConfigurationException | SAXException e) {
+        } catch (UnknownActiveComponementException | IOException | ParserConfigurationException | SAXException e) {
+            
+            System.out.println(e.getMessage());
             return null;
-         }
+        }
          
         
     }
@@ -231,7 +235,27 @@ public class ComponementActive extends Componement {
 
   
     @Override
-     public String genCode(){
+    public String[] genCode(){
+        try{
+        if (R_On==-1 | R_Off==-1 | V_Th_P==-1 | V_Th_N==-1){
+            throw new UndefinedPhysicalCaracteristicException("The physical Caracteristic of the componement "+this.getName()+" are not Initialised ");
+        }
+         
+        String returnProgram_Initialisation=""; //the initialisetion of the variables linked to our transistor
+        String returnProgram_Looper="";         //the main body of the program
+        
+        
+        
+        
+         
+         
+         
+         
+         
+         return 
+         }catch(UndefinedPhysicalCaracteristicException e){
+            System.out.println(e.getMessage());
+         }
          
          
          
@@ -244,8 +268,7 @@ public class ComponementActive extends Componement {
          
          
          
-         
-        return "This compnement classType is not Specified named : ";
+        
     }
     
     

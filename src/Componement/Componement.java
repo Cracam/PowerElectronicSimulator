@@ -4,6 +4,8 @@
  */
 package Componement;
 
+import Exceptions.ComponementNotDefinedException;
+
 /**
  * This class will represent a componement (after being processed by the circuit processing)
  * Thoses componement will be of 3 main types : 
@@ -81,8 +83,14 @@ public class Componement {
     }
   
     
-    public String genCode(){
-        return "This compnement classType is not Specified named : ";
+    public String[] genCode(){
+        try{
+            throw new ComponementNotDefinedException("This compnement classType is not Specified named : "+this.getType());
+        }catch(ComponementNotDefinedException e){
+            
+        }
+        
+        return new String[] {"This compnement classType is not Specified named : "+this.getType(),"This compnement classType is not Specified named : "};
     }
     
     
