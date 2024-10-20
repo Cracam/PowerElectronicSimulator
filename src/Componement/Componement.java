@@ -75,13 +75,14 @@ public class Componement {
      * This method will retunrn information on the componement base on his subtype (active, passive, source)
      */
     public String toString(){
-        return "This compnement type is not Specified ";
+        return "This compnement classType is not Specified named : "+this.getName()+
+                "\n Of type : "+this.getType()+ " number : "+this.getNumber()+
+                "\n Imput Node : "+this.getImputNode()+ " Output Node : "+ getOutputNode();
     }
-    
+  
     
     public String genCode(){
-        
-        return "";
+        return "This compnement classType is not Specified named : ";
     }
     
     
