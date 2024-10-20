@@ -13,11 +13,11 @@ package Componement;
  * @author LECOURT Camille
  */
 public class Componement {
-    private String name;
-    private int imputNode;
-    private int outputNode;
-    private String type;
-    private String number;
+    private final String name;
+    private final int imputNode;
+    private final int outputNode;
+    private final String type;
+    private final String number;
     
     /**
      * This is the builder of the componement
@@ -26,27 +26,64 @@ public class Componement {
      * @param imputNode / name of the imput node for this componement
      * @param outputNode  / name of the output node for this componement
      */
-    public Componement(String name,int imputNode,int outputNode){
+    protected Componement(String name,int imputNode,int outputNode){
         this.name=name;
         this.imputNode=imputNode;
         this.outputNode=outputNode;
         
         
-        this.type = "";
-        this.number = "";
+        String type_constuctor = "";
+        String number_constuctor = "";
 
         for (char c : name.toCharArray()) {
             
             if (Character.isDigit(c)) {
-                this.number += c;
+                number_constuctor += c;
             } else {
-                this.type += c;
+                type_constuctor += c;
             }
         }
+        this.number=number_constuctor;
+        this.type=type_constuctor;
     }
- 
-   
+    
+    
 
+    public String getName() {
+        return name;
+    }
+
+    public int getImputNode() {
+        return imputNode;
+    }
+
+    public int getOutputNode() {
+        return outputNode;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+    
+    @Override
+    /**
+     * This method will retunrn information on the componement base on his subtype (active, passive, source)
+     */
+    public String toString(){
+        return "This compnement type is not Specified ";
+    }
+    
+    
+    public String genCode(){
+        
+        return "";
+    }
+    
+    
     
     
     

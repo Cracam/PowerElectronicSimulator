@@ -2,13 +2,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
  */
-package activecomponementsimulator;
+package simulatorBuilder;
 
 /**
  *
  * @author Administrateur
  */
-public class ActiveComponementSimulator {
+public class SimulatorBuider {
 
     /**
      * @param args the command line arguments
