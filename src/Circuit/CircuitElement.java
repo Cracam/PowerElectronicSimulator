@@ -7,10 +7,10 @@ package Circuit;
 import Componement.Componement;
 
 /**
- *
- * @author Administrateur
+ *This abstract class is a group of componement and is practical for the definition of one Mesh,Cell,Node.
+ * @author  LECOURT Camille
  */
-public class CircuitElement {
+public abstract class CircuitElement {
     private final String name;
     private final int compCount;
     
@@ -24,7 +24,7 @@ public class CircuitElement {
      * @param count 
      */
     public CircuitElement(String type_name,int count) {
-        this.name = type_name+count;
+        this.name = "Unspecified_"+count;
         this.compCount = count;
         this.componements=new Componement[count];
     }
@@ -44,7 +44,12 @@ public class CircuitElement {
     public void setComponements(Componement[] componements) {
         this.componements = componements;
     }
-
+    
+    /**
+     * Set A componeement in the componement Array at an index
+     * @param componements
+     * @param index 
+     */
     public void setOneComponements(Componement componements,int index) {
         this.componements[index] = componements;
     }

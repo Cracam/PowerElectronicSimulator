@@ -4,8 +4,8 @@
  */
 package Componement;
 
-import Exceptions.UndefinedPhysicalCaracteristicException;
-import Exceptions.UnknownActiveComponementException;
+import Exceptions.Componement.UndefinedPhysicalCaracteristicException;
+import Exceptions.Componement.UnknownActiveComponementException;
 import java.io.File;
 import java.io.IOException;
 import javax.xml.parsers.DocumentBuilder;
@@ -18,8 +18,9 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
- *
- * @author Administrateur
+ * This class represent an active Componament in one of the most simple way.
+ * 
+ * @author  LECOURT Camille
  */
 public class ComponementActive extends Componement {
     //The 6 variables describing the active componement behavior

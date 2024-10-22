@@ -4,45 +4,31 @@
  */
 package Circuit;
 
-import Componement.Componement;
+
 
 /**
- *
- * @author Administrateur
+ *This class reprensent a Node in an electrical circuit.
+ * @author LECOURT Camille
  */
-public class Node {
-    private final String name;
-    private final int compCount;
-    
-    private Componement[] componements;
+public class Node extends CircuitElement{
     private static int nodesCount;
     
-    public Node(int compCount) {
-        this.compCount = compCount;
+
+    /**
+     * This constructor create a new mesh with a name, compCount representing the number of componement in a mesh.
+     * @param count 
+     */
+    public Node( int count) {
+        super("mesh_",count);
         Node.nodesCount++;
-        this.name="node_"+Node.nodesCount;
-        this.componements=new Componement[compCount];
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public int getCompCount() {
-        return compCount;
     }
 
     public static int getNodesCount() {
-        return nodesCount;
-    }
-    
-    
-    public void setComponements(Componement[] componements) {
-        this.componements = componements;
+        return Node.nodesCount;
     }
 
-    public void setOneComponements(Componement componements,int index) {
-        this.componements[index] = componements;
-    }
+    
+    
+    
     
 }

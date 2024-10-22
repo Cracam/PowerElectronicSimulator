@@ -4,7 +4,7 @@
  */
 package Componement;
 
-import Exceptions.ComponementNotDefinedException;
+import Exceptions.Componement.ComponementNotDefinedException;
 
 /**
  * This class will represent a componement (after being processed by the circuit processing)

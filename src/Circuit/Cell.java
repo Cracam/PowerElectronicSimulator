@@ -1,13 +1,20 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package Circuit;
 
 /**
- *
- * @author Administrateur
+ * This class represent a commutation cell
+ * 
+ * @author LECOURT Camille
  */
-public class Cell {
+public class Cell extends CircuitElement{
+    private static int cellsCount;
     
+    public Cell(int count){
+        super("cell_",count);
+        Cell.cellsCount++;
+    }
+    
+     public static int getCellsCount() {
+        return Cell.cellsCount;
+    }
 }
