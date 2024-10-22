@@ -241,18 +241,12 @@ public class ComponementActive extends Componement {
             throw new UndefinedPhysicalCaracteristicException("The physical Caracteristic of the componement "+this.getName()+" are not Initialised ");
         }
          
-        String returnProgram_Initialisation=""; //the initialisetion of the variables linked to our transistor
-        String returnProgram_Looper="";         //the main body of the program
+//        String returnProgram_Initialisation;
+//        return Program_Initialisation="boolean State_"+this.name";\n"+ "";
+//         //the initialisetion of the variables linked to our transistor
+//        String returnProgram_Looper="";         //the main body of the program
         
-        
-        
-        
-         
-         
-         
-         
-         
-         return 
+     
          }catch(UndefinedPhysicalCaracteristicException e){
             System.out.println(e.getMessage());
          }
