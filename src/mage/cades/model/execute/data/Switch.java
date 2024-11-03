@@ -147,7 +147,11 @@ public class Switch extends PhysicalComponent {
          
    
          
-         
+         /**
+          * this program will compute the state of the system using it's command + tension or current (depending on his state)
+          * 
+          * @return true if a change false if not 
+          */
          public boolean computeState() {
 
                   boolean cmd = ;
@@ -155,13 +159,13 @@ public class Switch extends PhysicalComponent {
                   if (state) { // test to go from close to open
                            double Icomp = ;
                            if (Icomp > 0) {// Positive current
-                                    if (openingPassivePositive | (cmd & openingActivePositive)) {
+                                    if (openingPassivePositive | (cmd && openingActivePositive)) {
                                              open();
                                              return true;
                                     }
 
                            } else { //negative current 
-                                    if (openingPassiveNegative | (cmd & openingActiveNegative)) {
+                                    if (openingPassiveNegative | (cmd && openingActiveNegative)) {
                                              open();
                                              return true;
                                     }
@@ -170,13 +174,13 @@ public class Switch extends PhysicalComponent {
                   } else { // test to go from open to close
                            double Vcomp = ;
                            if (Vcomp > positiveTensionThreshold) { // positive tension
-                                    if (closingPassivePositive | (cmd & closingActivePositive)) {
+                                    if (closingPassivePositive | (cmd && closingActivePositive)) {
                                              close();
                                              return true;
                                     }
 
                            } else if (Vcomp < negativeTensionThreshold) {
-                                    if (closingPassiveNegative | (cmd & closingActiveNegative)) {
+                                    if (closingPassiveNegative | (cmd && closingActiveNegative)) {
                                              close();
                                              return true;
                                     }
@@ -187,13 +191,42 @@ public class Switch extends PhysicalComponent {
 
          }
 
+         
+         
+         /**
+          * This method will determine the next date at wich the componement will compute
+          * @return the next date  or 0.0 if not able to predict
+          */
          public double computeNextDate() {
                   double nextDate;
                   double time;
                   double ancien_time;
-
-                  nextDate = temps + (() *   (time - ancien_time)) / ()
-         }
+                  
+                  if(state){
+                           if(openingPassivePositive ){
+                                    //compute passive
+                                    if(!openingPassiveNegative){
+                                             //compute cmd
+                                    }
+                           }else{
+                                    //compute cmd
+                                    if(openingPassiveNegative){
+                                             //compute passive
+                                    }
+                           }
+                  }else{
+                           if(!(closingPassivePositive ^ closingPassiveNegative)){
+                                    if(closingPassivePositive){
+                                             //compute passing by 0
+                                    }else{
+                                             //compute cmd=0
+                                    }
+                           }else{
+                                    //compute the 2
+                           }
+                                    
+                  }
+         }        
 
 ;
 
