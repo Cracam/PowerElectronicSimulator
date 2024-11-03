@@ -14,39 +14,95 @@ public class Switch extends PhysicalComponent {
 
          protected boolean state;
          //Parameter of the switch state transition:
-         private final boolean OpenableForPositiveTension; // can the componement be able to be opened for positive tension
-         private final boolean OpenableForNegativeTension;
-         private final boolean  CommandClosingForPositiveTension; // can we commant the componement Off-->On for positive tension 
-         private final boolean CommandOpeningForPositiveTension; // can we command the componement On--> Off for positive tension
-         private final boolean CommandClosingForNegativeTension;
-         private final boolean CommandOpeningForNegativeTension;
-         
-         
-         
+         private final boolean openableForPositiveTension; // can the componement be able to be opened for positive tension
+         private final boolean openableForNegativeTension;
+         private final boolean commandClosingForPositiveTension; // can we commant the componement Off-->On for positive tension 
+         private final boolean commandOpeningForPositiveTension; // can we command the componement On--> Off for positive tension
+         private final boolean commandClosingForNegativeTension;
+         private final boolean commandOpeningForNegativeTension;
+         // The variable to state the validity of the test :
+         //-----for closing test :
+         private final boolean closingPassivePositive;
+         private final boolean closingPassiveNegative;
+         private final boolean closingActivePositive;
+         private final boolean closingActiveNegative;
+         //-----for opening test :
+         private final boolean openingPassivePositive;
+         private final boolean openingPassiveNegative;
+         private final boolean openingActivePositive;
+         private final boolean openingActiveNegative;
+
          //Physical state our switch can have
-         protected double stateOnResistance=0;
-         protected double stateOffResistance=100000;
-         protected double positiveTensionThreshold=0;
-         protected double negativeTensionThreshold=0;
+         protected double stateOnResistance = 0;
+         protected double stateOffResistance = 100000;
+         protected double positiveTensionThreshold = 0;
+         protected double negativeTensionThreshold = 0;
          //
 
-         public Switch(boolean OpenableForPositiveTension, boolean OpenableForNegativeTension, boolean CommandClosingForPositiveTension, boolean CommandOpeningForPositiveTension, boolean CommandClosingForNeagativeTension, boolean CommandOpeningForNegativeTension,boolean initialState, String type, String name, int n1, int n2) {
+         public Switch(boolean openableForPositiveTension, boolean openableForNegativeTension, boolean commandClosingForPositiveTension, boolean commandOpeningForPositiveTension, boolean commandClosingForNeagativeTension, boolean commandOpeningForNegativeTension, boolean initialState, String type, String name, int n1, int n2) {
                   super(type, name, n1, n2);
-                  this.OpenableForPositiveTension = OpenableForPositiveTension;
-                  this.OpenableForNegativeTension = OpenableForNegativeTension;
-                  this.CommandClosingForPositiveTension = CommandClosingForPositiveTension;
-                  this.CommandOpeningForPositiveTension = CommandOpeningForPositiveTension;
-                  this.CommandClosingForNegativeTension = CommandClosingForNeagativeTension;
-                  this.CommandOpeningForNegativeTension = CommandOpeningForNegativeTension;
-                  this.state=initialState;
-                    if(state) this.setNumericalValue(this.stateOnResistance);
-                  else this.setNumericalValue(this.stateOffResistance);
+                  this.openableForPositiveTension = openableForPositiveTension;
+                  this.openableForNegativeTension = openableForNegativeTension;
+                  this.commandClosingForPositiveTension = commandClosingForPositiveTension;
+                  this.commandOpeningForPositiveTension = commandOpeningForPositiveTension;
+                  this.commandClosingForNegativeTension = commandClosingForNeagativeTension;
+                  this.commandOpeningForNegativeTension = commandOpeningForNegativeTension;
+
+//determining transition to closing state
+                  if (!this.openableForPositiveTension) {// if the opened state doesn't exit, 
+                           this.closingPassivePositive = true;// it's a passive closing
+                           this.closingActivePositive = false; //it' not commandable
+                  } else {
+                           this.closingPassivePositive = false; // no passive clocing
+                           this.closingActivePositive = this.commandClosingForPositiveTension; // take the command (if the transition exist
+                  }
+
+                  if (!this.openableForNegativeTension) {// if the opened state doesn't exit, 
+                           this.closingPassiveNegative = true;// it's a passive closing
+                           this.closingActiveNegative = false; //it' not commandable
+                  } else {
+                           this.closingPassiveNegative = false; // no passive clocing
+                           this.closingActiveNegative = this.commandClosingForNegativeTension; // take the command (if the transition exist
+                  }
+
+// Determining trasition to opened state :
+                  if (this.openableForPositiveTension) {// Is openable for positive tension ?
+                           if (this.commandOpeningForPositiveTension) { //Can we command on closing ?
+                                    this.openingPassivePositive = false; // no passive changes
+                                    this.openingActivePositive = true; // commanded closing transition
+                           } else {
+                                    this.openingPassivePositive = !this.commandClosingForPositiveTension; // if not commandable in both direction : passive transtion
+                                    this.openingActivePositive = false;
+                           }
+                  } else {// we cannot open so we invalidate the transitions
+                           this.openingPassivePositive = false;
+                           this.openingActivePositive = false;
+                  }
+
+                  if (this.openableForNegativeTension) {// Is openable for positive tension ?
+                           if (this.commandOpeningForNegativeTension) { //Can we command on closing ?
+                                    this.openingPassiveNegative = false; // no passive changes
+                                    this.openingActiveNegative = true; // commanded closing transition
+                           } else {
+                                    this.openingPassiveNegative = !this.commandClosingForNegativeTension; // if not commandable in both direction : passive transtion
+                                    this.openingActiveNegative = false;
+                           }
+                  } else {// we cannot open so we invalidate the transitions
+                           this.openingPassiveNegative = false;
+                           this.openingActiveNegative = false;
+                  }
+
+                  //Set the initial state of the componement
+                  this.state = initialState;
+                  if (state) {
+                           this.setNumericalValue(this.stateOnResistance);
+                  } else {
+                           this.setNumericalValue(this.stateOffResistance);
+                  }
          }
          
-         
-         
+     
 
-         
          public void setSwitchCaracteristics(double stateOnResistance, double stateOffResistance, double positiveTensionThreshold, double negativeTensionThreshold) {
                   this.stateOnResistance = stateOnResistance;
                   this.stateOffResistance = stateOffResistance;
@@ -54,69 +110,92 @@ public class Switch extends PhysicalComponent {
                   this.negativeTensionThreshold = negativeTensionThreshold;
          }
 
-  
-         
          /**
-          * Toogle the state of colsing the switch (setting the value of the resistance, 
+          * Toogle the state of colsing the switch (setting the value of the
+          * resistance,
           */
-         public void close(){
+         public void close() {
                   this.setNumericalValue(this.stateOnResistance);
-                  this.state=false;
+                  this.state = false;
                   //set current to 0
          }
-         
-         public void open(){
+
+         public void open() {
                   this.setNumericalValue(this.stateOffResistance);
-                  this.state=true;
+                  this.state = true;
                   //set tension to 0
          }
          
-         public boolean computeState(){
-                 
-                  
-                  boolean cmd=;
-                  
-                  if(state){ // test to go from close to open
-                           double Icomp=;
-                           if(Icomp>0){
-                                    if(OpenableForPositiveTension){
-                                             if(CommandOpeningForPositiveTension){
-                                                      if(cmd)open();
-                                             }else{
-                                                      if(!CommandClosingForPositiveTension)open();
-                                             }
+         
+         
+
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+   
+         
+         
+         public boolean computeState() {
+
+                  boolean cmd = ;
+
+                  if (state) { // test to go from close to open
+                           double Icomp = ;
+                           if (Icomp > 0) {// Positive current
+                                    if (openingPassivePositive | (cmd & openingActivePositive)) {
+                                             open();
+                                             return true;
                                     }
-                           }else{
-                                    if(OpenableForNegativeTension){
-                                             if(CommandOpeningForNegativeTension){
-                                                      if(cmd)open();
-                                             }else{
-                                                      if(!CommandClosingForNegativeTension)open();
-                                             }
+
+                           } else { //negative current 
+                                    if (openingPassiveNegative | (cmd & openingActiveNegative)) {
+                                             open();
+                                             return true;
                                     }
                            }
-                           
-                  }else{ // test to go from open to close
-                            double Vcomp=;
-                           if(Vcomp>0){
-                                    
-                                    if(OpenableForPositiveTension){
-                                             if(cmd & CommandClosingForPositiveTension)close();
-                                    }else{
+
+                  } else { // test to go from open to close
+                           double Vcomp = ;
+                           if (Vcomp > positiveTensionThreshold) { // positive tension
+                                    if (closingPassivePositive | (cmd & closingActivePositive)) {
                                              close();
+                                             return true;
                                     }
-                           }else{
-                                     if(OpenableForNegativeTension){
-                                             if(cmd & CommandClosingForNegativeTension)close();
-                                    }else{
+
+                           } else if (Vcomp < negativeTensionThreshold) {
+                                    if (closingPassiveNegative | (cmd & closingActiveNegative)) {
                                              close();
+                                             return true;
                                     }
                            }
-                
-                           
+
                   }
+                  return false;
+
          }
-         
-         
-         // changelent
+
+         public double computeNextDate() {
+                  double nextDate;
+                  double time;
+                  double ancien_time;
+
+                  nextDate = temps + (() *   (time - ancien_time)) / ()
+         }
+
+;
+
+// changelent
 }
