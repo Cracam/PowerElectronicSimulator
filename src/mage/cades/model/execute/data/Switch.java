@@ -7,7 +7,17 @@ package mage.cades.model.execute.data;
 import java.util.Set;
 
 /**
- *
+ * this class represent any switch componement in power electronic (in an ideal way
+ *  the componement is defined by 6 parameter :
+ *  openableForPositiveTension and openableForNegativeTension
+ * commandClosingForPositiveTension and commandOpeningForPositiveTension
+ * commandClosingForNegativeTension and commandOpeningForNegativeTension*
+ * 
+ * there will have 2 ways of defining it with 2 constructors.
+ * - manually write the 6 variable + the componement placing in the project
+ * - get the 6 variable by the tupe of the switch
+ * 
+ * 
  * @author LECOURT Camille
  */
 public class Switch extends PhysicalComponent {
@@ -38,7 +48,24 @@ public class Switch extends PhysicalComponent {
          protected double positiveTensionThreshold = 0;
          protected double negativeTensionThreshold = 0;
          //
-
+         
+         /**
+          * this is a constructor for a switch
+          * @param openableForPositiveTension 1st carateristic of the swith
+          * @param openableForNegativeTension 2nd carateristic of the swith
+          * @param commandClosingForPositiveTension 3rd carateristic of the swith 
+          * @param commandOpeningForPositiveTension 4th carateristic of the swith
+          * @param commandClosingForNeagativeTension 5th carateristic of the swith
+          * @param commandOpeningForNegativeTension 6th carateristic of the swith
+          * @param initialState is on or is off
+          * @param type give the type og the conductor
+          * @param name name of the switch
+          * @param n1 node 1
+          * @param n2  node 2
+          * 
+          * it will after initialize all the 8 variable corresponding to the possible transition for the switch
+          * this avoid making 3 true false test
+          */
          public Switch(boolean openableForPositiveTension, boolean openableForNegativeTension, boolean commandClosingForPositiveTension, boolean commandOpeningForPositiveTension, boolean commandClosingForNeagativeTension, boolean commandOpeningForNegativeTension, boolean initialState, String type, String name, int n1, int n2) {
                   super(type, name, n1, n2);
                   this.openableForPositiveTension = openableForPositiveTension;
@@ -56,6 +83,7 @@ public class Switch extends PhysicalComponent {
                            this.closingPassivePositive = false; // no passive clocing
                            this.closingActivePositive = this.commandClosingForPositiveTension; // take the command (if the transition exist
                   }
+                  
 
                   if (!this.openableForNegativeTension) {// if the opened state doesn't exit, 
                            this.closingPassiveNegative = true;// it's a passive closing
@@ -78,6 +106,7 @@ public class Switch extends PhysicalComponent {
                            this.openingPassivePositive = false;
                            this.openingActivePositive = false;
                   }
+                  
 
                   if (this.openableForNegativeTension) {// Is openable for positive tension ?
                            if (this.commandOpeningForNegativeTension) { //Can we command on closing ?
@@ -102,7 +131,14 @@ public class Switch extends PhysicalComponent {
          }
          
      
-
+         /**
+          * this program will set the physical caracteristic of the switch 
+          * It's optinal because the ideal value will be used if not initialized
+          * @param stateOnResistance 
+          * @param stateOffResistance
+          * @param positiveTensionThreshold
+          * @param negativeTensionThreshold 
+          */
          public void setSwitchCaracteristics(double stateOnResistance, double stateOffResistance, double positiveTensionThreshold, double negativeTensionThreshold) {
                   this.stateOnResistance = stateOnResistance;
                   this.stateOffResistance = stateOffResistance;
@@ -125,21 +161,6 @@ public class Switch extends PhysicalComponent {
                   this.state = true;
                   //set tension to 0
          }
-         
-         
-         
-
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
          
          
          
@@ -199,12 +220,17 @@ public class Switch extends PhysicalComponent {
           */
          public double computeNextDate() {
                   double nextDate;
+                  
                   double time;
                   double ancien_time;
                   
                   if(state){
+                           double current;
+                           double ancien_current;
+                           
                            if(openingPassivePositive ){
                                     //compute passive
+                                    nextDate=time-current*(time-ancien_time)/(current-ancien_current);
                                     if(!openingPassiveNegative){
                                              //compute cmd
                                     }
@@ -212,17 +238,25 @@ public class Switch extends PhysicalComponent {
                                     //compute cmd
                                     if(openingPassiveNegative){
                                              //compute passive
+                                             nextDate=time-current*(time-ancien_time)/(current-ancien_current);
                                     }
                            }
                   }else{
-                           if(!(closingPassivePositive ^ closingPassiveNegative)){
-                                    if(closingPassivePositive){
-                                             //compute passing by 0
-                                    }else{
-                                             //compute cmd=0
+                           double tension;
+                           double ancien_tension;
+                           
+                           if(closingPassivePositive ){
+                                    //compute passive
+                                    nextDate=time-tension*(time-ancien_time)/(tension-ancien_tension);
+                                    if(!closingPassiveNegative){
+                                             //compute cmd
                                     }
                            }else{
-                                    //compute the 2
+                                    //compute cmd
+                                    if(closingPassiveNegative){
+                                             //compute passive
+                                             nextDate=time-tension*(time-ancien_time)/(tension-ancien_tension);
+                                    }
                            }
                                     
                   }
