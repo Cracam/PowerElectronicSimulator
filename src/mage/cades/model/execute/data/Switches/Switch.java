@@ -2,9 +2,35 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package mage.cades.model.execute.data;
+package mage.cades.model.execute.data.Switches;
+
+
+
+
+
+/* list of the componement I need to create
+  * "Diode" ----
+     * "Thyristor"
+     * "Mos"
+     * "ThyristorDual"
+     * "Transistor" ----
+     * "TransistorDiodeSerie"
+     * "BidirectionnalBicontrolable1"
+     * "BidirectionnalBicontrolable2"
+*/
+
+
+
+
+
+
+
+
+
+
 
 import java.util.Set;
+import mage.cades.model.execute.data.PhysicalComponent;
 
 /**
  * this class represent any switch componement in power electronic (in an ideal way
@@ -35,6 +61,8 @@ public abstract class Switch extends PhysicalComponent {
          
          private double control;
          private double old_control;
+         private boolean state_control;
+        
          
          
          //Parameter of the switch state transition:
@@ -83,7 +111,7 @@ public abstract class Switch extends PhysicalComponent {
           * it will after initialize all the 8 variable corresponding to the possible transition for the switch
           * this avoid making 3 true false test
           */
-         public Switch(boolean turnableOffForPositiveTension, boolean turnableOffForNegativeTension, boolean commandTurnOnForPositiveTension, boolean commandTurnOffForPositiveTension, boolean commandTurnOnForNeagativeTension, boolean commandTurnOffForNegativeTension, boolean initialState, String type, String name, int n1, int n2) {
+         protected Switch(String type, String name, int n1, int n2,boolean turnableOffForPositiveTension, boolean turnableOffForNegativeTension, boolean commandTurnOnForPositiveTension, boolean commandTurnOffForPositiveTension, boolean commandTurnOnForNeagativeTension, boolean commandTurnOffForNegativeTension) {
                   super(type, name, n1, n2);
                   
          //Componement caracterisation
@@ -124,7 +152,10 @@ public abstract class Switch extends PhysicalComponent {
                   this.setNumericalValue(this.stateOffResistance);
          }
          
-     
+     private void setControlDemmand(){
+              if (this.control>5) this.state_control=true;
+              else this.state_control=false;
+     }
          
          
          
@@ -181,29 +212,38 @@ public abstract class Switch extends PhysicalComponent {
           * 
           * WARNING ! ---> USE AFTER state computation
           * 
-          * @param time
-          * @param tension
-          * @param current
-          * @param control
-          * @param state
           */
-         protected void setNewState(double time, double tension,double current,double control,boolean state){
+         private void setOldState(){
                  this.old_time=this.time;
                   this.old_tension=this.tension;
                   this.old_current=this.current;
                   this.old_control=this.control;
                   this.old_state=this.state;
-
-                  this.time=time;
-                  this.tension=tension;
-                  this.current=current;
+         }
+         
+         
+         
+         /**
+          * Set the new state of the componement (exept state that will e computed)
+          * WARNING --- Use Before state computation
+          * @param time
+          * @param tension
+          * @param current
+          * @param control 
+          */
+         private void setNewEntries(double time, double tension,double current,double control){
+                  this.time = time;
+                  this.tension = tension;
+                  this.current = current;
                   this.control=control;
-                  this.state=state;
          }
 
-         
-  
 
+         
+         
+   //--------------------------------------------------------------------------------------------------------
+  //Compute nextDates  methods :   
+         
          
          /**
           * This method will compute the next date at wich the value will cross 0.
@@ -215,19 +255,53 @@ public abstract class Switch extends PhysicalComponent {
           * @param old_var
           * @return 
           */
-         protected double computeNextDate(double time, double old_time, double var, double old_var){
+         private double computeNextDate(double time, double old_time, double var, double old_var){
                   double next_date=time-var*(time-old_time)/(var-old_var);
                   if (next_date>time) return next_date;
                   else return 0.0;
          }
          
          
-
-// changelent
-
-
-
          /**
+          * this program compute the next zero crossing of the tension
+          * @return 
+          */
+         private double computeNextDateWithTension(){
+                  return computeNextDate(this.time, this.old_time,this.tension,this.old_tension);
+         }
+         
+         /**
+          * this program compute the next zero crossing of the current
+          * @return 
+          */
+          private double computeNextDateWithCurrent(){
+                  return computeNextDate(this.time, this.old_time,this.current,this.old_current);
+         }
+
+
+          
+   //--------------------------------------------------------------------------------------------------------
+  //Compute state methods :
+          
+              /**
+          * this program will make the transition tests for the switch
+          * 
+          * @return true if a change false if not 
+          */
+         protected abstract boolean computeStateTurnOffTransition();
+         
+         /**
+          * this program will make the transition tests for the switch
+          * 
+          * @return true if a change false if not 
+          */
+         protected abstract boolean computeStateTurnOnTransition();
+          
+          
+          
+          
+          
+ /**
           * this program will compute the state of the system using it's command + tension or current (depending on his state)
           * 
           * @param time
@@ -236,46 +310,74 @@ public abstract class Switch extends PhysicalComponent {
           * @param control
           * @return true if a change false if not 
           */
-         public abstract boolean computeState(double time ,double current, double tension, double control);
+                   public boolean ComputeState(double time ,double current, double tension, double control){
+                            setNewEntries(time,current,tension, control);
+                            setControlDemmand(); // to convert the double variable of control into a boolean (this.state_control)
+                                      
+                             // State computation : (we compute the new state using the abstracts methods computeStateTurnOffTransition and computeStateTurnOnTransition 
+                            if (this.old_state){
+                                     this.state=computeStateTurnOffTransition();
+                            }else{
+                                     this.state=computeStateTurnOnTransition();   
+                            }
+                            
+                            
+                            if(this.state != this.old_state){ // if change no dates need to be processed
+                                     setOldState(); // refresh the old values
+                                     
+                                     //exit, the state have changed reset of step
+                                     return true;
+                            }else{ // ne changes of state so next Date computation :
+                                     
+                                     setOldState(); // refresh the old values
+                                     
+                                             // Next Date computation :
+                                    if (this.state){
+                                             AJOUTERPDI(computeNextDateWithTension()); // A remplacer 
+                                    }else{
+                                             AJOUTERPDI(computeNextDateWithCurrent()); // A remplacer 
+                                    }
+                                    
+                                    return false;
+                            }
 
+                   }
+                   
+                   
+     
          
 //Turning On transition
          /**
           * Make the turnOn  passive   transition for positive tension 
-          * @param tension
           * @return 
           */
-         protected boolean turnOnPassivePositiveTransition(double tension){
-                  return (tension>this.positiveTensionThreshold);
+         protected boolean turnOnPassivePositiveTransition(){
+                  return (this.tension>this.positiveTensionThreshold);
          }
          
          /**
           * Make the turnOn  passive transition for negative  tension 
-          * @param tension
           * @return 
           */
-         protected boolean turnOnPassiveNegativeTransition(double tension){
-                  return (tension<negativeTensionThreshold);
+         protected boolean turnOnPassiveNegativeTransition(){
+                  return (this.tension<negativeTensionThreshold);
          }
          
          /**
           * Make the turnOn  active transition for positive  tension 
-          * @param tension 
-          * @param control is a boolean because the state of 1 or 0 for the command will be computed before
           * @return 
           */
-         protected boolean turnOnActivePositiveTransition(double tension, boolean control){
-                  return ((tension>this.positiveTensionThreshold) && control);
+         protected boolean turnOnActivePositiveTransition(){
+                  return ((this.tension>this.positiveTensionThreshold) && this.state_control);
          }
          
          /**
           * Make the turnOn  active transition for positive  tension 
-          * @param tension 
-          * @param control is a boolean because the state of 1 or 0 for the command will be computed before
+
           * @return 
           */
-         protected boolean turnOnActiveNegativeTransition(double tension, boolean control){
-                  return ((tension<this.negativeTensionThreshold) && control);
+         protected boolean turnOnActiveNegativeTransition(){
+                  return ((this.tension<this.negativeTensionThreshold) && this.state_control);
          }
 //-----
          
@@ -285,42 +387,36 @@ public abstract class Switch extends PhysicalComponent {
          
          /**
           * Make the turn Off passive transiton for a positive tension
-          * @param current
           * @return 
           */
-         protected boolean turnOffPassivePositiveTransition(double current){
-                  return (current >0);
+         protected boolean turnOffPassivePositiveTransition(){
+                  return (this.current >0);
          }
          
          
          /**
           * Make the turn Off passive transiton for a negative tension
-          * @param current
           * @return 
           */
-         protected boolean turnOffPassiveNegativeTransition(double current){
-                  return (current <0);
+         protected boolean turnOffPassiveNegativeTransition(){
+                  return (this.current <0);
          }
          
          
           /**
           * Make the turnOff  active transition for positive  tension 
-          * @param current
-          * @param control is a boolean because the state of 1 or 0 for the command will be computed before
           * @return 
           */
-         protected boolean turnOffActivePositiveTransition(double current, boolean control){
-                  return ((current>0) && control);
+         protected boolean turnOffActivePositiveTransition(){
+                  return ((this.current>0) && this.state_control);
          }
          
          /**
           * Make the turnOff  active transition for positive  tension 
-          * @param current
-          * @param control is a boolean because the state of 1 or 0 for the command will be computed before
           * @return 
           */
-         protected boolean turnOffActiveNegativeTransition(double current, boolean control){
-                  return ((current<0) && control);
+         protected boolean turnOffActiveNegativeTransition(){
+                  return ((this.current<0) && this.state_control);
          }
          
          
